@@ -67,7 +67,7 @@ Example::
 
 Spiders (See the :ref:`topics-spiders` chapter for reference) can define their
 own settings that will take precedence and override the project ones. They can
-do so by setting their :attr:`~scrapy.spiders.Spider.custom_settings` attribute::
+do so by setting their :attr:`~scrapy.Spider.custom_settings` attribute::
 
     class MySpider(scrapy.Spider):
         name = 'myspider'
@@ -142,7 +142,7 @@ In a spider, the settings are available through ``self.settings``::
     The ``settings`` attribute is set in the base Spider class after the spider
     is initialized.  If you want to use the settings before the initialization
     (e.g., in your spider's ``__init__()`` method), you'll need to override the
-    :meth:`~scrapy.spiders.Spider.from_crawler` method.
+    :meth:`~scrapy.Spider.from_crawler` method.
 
 Settings can be accessed through the :attr:`scrapy.crawler.Crawler.settings`
 attribute of the Crawler that is passed to ``from_crawler`` method in
@@ -338,7 +338,7 @@ is non-zero, download delay is enforced per IP, not per domain.
 DEFAULT_ITEM_CLASS
 ------------------
 
-Default: ``'scrapy.item.Item'``
+Default: ``'scrapy.Item'``
 
 The default class that will be used for instantiating items in the :ref:`the
 Scrapy shell <topics-shell>`.
@@ -360,7 +360,7 @@ The default headers used for Scrapy HTTP Requests. They're populated in the
 
 .. caution:: Cookies set via the ``Cookie`` header are not considered by the
     :ref:`cookies-mw`. If you need to set cookies for a request, use the
-    :class:`Request.cookies <scrapy.http.Request>` parameter. This is a known
+    :class:`Request.cookies <scrapy.Request>` parameter. This is a known
     current limitation that is being worked on.
 
 .. setting:: DEPTH_LIMIT
@@ -384,8 +384,8 @@ Default: ``0``
 
 Scope: ``scrapy.spidermiddlewares.depth.DepthMiddleware``
 
-An integer that is used to adjust the :attr:`~scrapy.http.Request.priority` of
-a :class:`~scrapy.http.Request` based on its depth.
+An integer that is used to adjust the :attr:`~scrapy.Request.priority` of
+a :class:`~scrapy.Request` based on its depth.
 
 The priority of a request is adjusted as follows::
 
@@ -680,12 +680,16 @@ handler (without replacement), place this in your ``settings.py``::
 
 .. _http2:
 
-The default HTTPS handler uses HTTP/1.1. To use HTTP/2 update
-:setting:`DOWNLOAD_HANDLERS` as follows::
+The default HTTPS handler uses HTTP/1.1. To use HTTP/2:
 
-    DOWNLOAD_HANDLERS = {
-        'https': 'scrapy.core.downloader.handlers.http2.H2DownloadHandler',
-    }
+#.  Install ``Twisted[http2]>=17.9.0`` to install the packages required to
+    enable HTTP/2 support in Twisted.
+
+#.  Update :setting:`DOWNLOAD_HANDLERS` as follows::
+
+        DOWNLOAD_HANDLERS = {
+            'https': 'scrapy.core.downloader.handlers.http2.H2DownloadHandler',
+        }
 
 .. warning::
 
@@ -812,14 +816,14 @@ The default (``RFPDupeFilter``) filters based on request fingerprint using
 the ``scrapy.utils.request.request_fingerprint`` function. In order to change
 the way duplicates are checked you could subclass ``RFPDupeFilter`` and
 override its ``request_fingerprint`` method. This method should accept
-scrapy :class:`~scrapy.http.Request` object and return its fingerprint
+scrapy :class:`~scrapy.Request` object and return its fingerprint
 (a string).
 
 You can disable filtering of duplicate requests by setting
 :setting:`DUPEFILTER_CLASS` to ``'scrapy.dupefilters.BaseDupeFilter'``.
 Be very careful about this however, because you can get into crawling loops.
 It's usually a better idea to set the ``dont_filter`` parameter to
-``True`` on the specific :class:`~scrapy.http.Request` that should not be
+``True`` on the specific :class:`~scrapy.Request` that should not be
 filtered.
 
 .. setting:: DUPEFILTER_DEBUG
@@ -1619,7 +1623,7 @@ Default: ``2083``
 Scope: ``spidermiddlewares.urllength``
 
 The maximum URL length to allow for crawled URLs. For more information about
-the default value for this setting see: https://boutell.com/newfaq/misc/urllength.html
+the default value for this setting see: https://support.microsoft.com/en-us/topic/maximum-url-length-is-2-083-characters-in-internet-explorer-174e7c8a-6666-f4e0-6fd6-908b53c12246
 
 .. setting:: USER_AGENT
 
@@ -1641,7 +1645,6 @@ The following settings are documented elsewhere, please check each specific
 case to see how to enable and use them.
 
 .. settingslist::
-
 
 .. _Amazon web services: https://aws.amazon.com/
 .. _breadth-first order: https://en.wikipedia.org/wiki/Breadth-first_search
